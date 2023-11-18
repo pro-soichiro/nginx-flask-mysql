@@ -36,6 +36,8 @@ services:
     networks:
       - backnet
       - frontnet
+    volumes:
+      - ./backend:/code
     depends_on:
       db:
         condition: service_healthy
@@ -45,7 +47,7 @@ services:
     restart: always
     ports:
       - 80:80
-    depends_on: 
+    depends_on:
       - backend
     networks:
       - frontnet
