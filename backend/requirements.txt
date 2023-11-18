@@ -1,3 +1,5 @@
 Flask==2.2.3
 mysql-connector==2.2.9
 werkzeug==2.2.3
+wtforms==3.1.1
+pykakasi==2.2.1
