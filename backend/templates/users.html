@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+
+{% block content %}
+  <h1>User List</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Birth Year</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>
+            <a href="{{ url_for('user', id=user.id) }}">
+              {{ user.name }}
+            </a>
+          </td>
+          <td>{{ user.age }}</td>
+          <td>{{ user.age|birth_year }}</td>
+          <td>
+            {% if user.is_logged_in %}
+              ログイン中
+            {% else %}
+              ログアウト中
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

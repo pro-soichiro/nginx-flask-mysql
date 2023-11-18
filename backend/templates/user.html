@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}User Info{% endblock %}
+
+{% block content %}
+  <h1>User Info</h1>
+
+  <dl>
+    <dt>Profile</dt>
+    <dd>
+      <img
+        src="{{ url_for('static', filename='images/' + user.icon)}}"
+        alt="icon"
+        width="100"
+        >
+    </dd>
+    <dt>Name</dt>
+    <dd>{{ user.name }}</dd>
+    <dt>Age</dt>
+    <dd>{{ user.age }}</dd>
+    <dt>Birth Year</dt>
+    <dd>{{ user.age|birth_year }}</dd>
+    <dt>Status</dt>
+    <dd>
+      {% if user.is_logged_in %}
+        ログイン中
+      {% else %}
+        ログアウト中
+      {% endif %}
+    </dd>
+  </dl>
+
+  <a href="{{ url_for('users') }}">Back to User List</a>
+{% endblock %}
