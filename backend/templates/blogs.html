@@ -4,9 +4,15 @@
 {% block content %}
   <h1>Blogs</h1>
 
+  <a href="{{ url_for('new_blog') }}">New Blog</a>
+
   <ul>
     {% for blog in blogs %}
-      <li>{{ blog }}</li>
+      <li>
+        <a href="{{ url_for('blog', id=blog.id) }}">
+          {{ blog.id }}: {{ blog.title }}
+        </a>
+      </li>
     {% endfor %}
   </ul>
 {% endblock %}

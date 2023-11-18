@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField, PasswordField, validators
-import mysql.connector
+from models.blog import Blog
+from database import db
 
 import pykakasi
 import os
@@ -11,33 +12,8 @@ app = Flask(__name__)
 conn = None
 
 app.config['SECRET_KEY'] = b'\xd3\x8e\xf4<8\xdc\xb3\x8fHb\xd7\x1a\xb1\x98\x16\xbe'
-
-class DBManager:
-    def __init__(self, database='example', host="db", user="root", password_file=None):
-        pf = open(password_file, 'r')
-        self.connection = mysql.connector.connect(
-            user=user,
-            password=pf.read(),
-            host=host, # name of the mysql service as set in the docker compose file
-            database=database,
-            auth_plugin='mysql_native_password'
-        )
-        pf.close()
-        self.cursor = self.connection.cursor()
-
-    def populate_db(self):
-        self.cursor.execute('DROP TABLE IF EXISTS blog')
-        self.cursor.execute('CREATE TABLE blog (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255))')
-        self.cursor.executemany('INSERT INTO blog (id, title) VALUES (%s, %s);', [(i, 'Blog post #%d'% i) for i in range (1,5)])
-        self.connection.commit()
-
-    def query_titles(self):
-        self.cursor.execute('SELECT title FROM blog')
-        rec = []
-        for c in self.cursor:
-            rec.append(c[0])
-        return rec
-
+app.config.from_object('config.Config')
+db.init_app(app)
 
 class UserForm(Form):
   name = StringField('名前',[validators.Length(min=4, max=35)], render_kw={"placeholder": "山田 太郎"})
@@ -111,15 +87,25 @@ def birth_year(age):
 def index():
   return render_template('index.html')
 
-@app.route('/blogs')
-def listBlog():
-  global conn
-  if not conn:
-    conn = DBManager(password_file='/run/secrets/db-password')
-    conn.populate_db()
-  blogs = conn.query_titles()
+@app.route('/blogs/<int:id>')
+def blog(id):
+  blog = Blog.find(id)
+  return render_template('blog.html', blog=blog)
 
-  return render_template('blogs.html', blogs=blogs)
+@app.route('/blogs', methods=['GET', 'POST'])
+def blogs():
+  if request.method == 'GET':
+    blogs = Blog.all()
+    return render_template('blogs.html', blogs=blogs)
+  elif request.method == 'POST':
+    title = request.form['title']
+    blog = Blog(title=title)
+    blog.save()
+    return redirect(url_for('blog', id=blog.id))
+
+@app.route('/blogs/new')
+def new_blog():
+  return render_template('new_blog.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
