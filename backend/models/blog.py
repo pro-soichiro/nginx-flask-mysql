@@ -5,13 +5,16 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255))
+    body = db.Column(db.Text)
 
     def __repr__(self):
-        return "<Blog(id='%s', title='%s')>" % (self.id, self.title)
+        return "<Blog(id='%s', title='%s', body='%s')>" % (self.id, self.title, self.body)
 
+    @staticmethod
     def all():
         return db.session.query(Blog).all()
 
+    @staticmethod
     def find(id):
         return db.session.query(Blog).filter(Blog.id == id).first()
 
@@ -19,8 +22,9 @@ class Blog(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, title):
+    def update(self, title, body):
         self.title = title
+        self.body = body
         db.session.commit()
 
     def delete(self):

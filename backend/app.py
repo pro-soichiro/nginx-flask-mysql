@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField, PasswordField, validators
 from models.blog import Blog
 from database import db
+from flask_migrate import Migrate
 
 import pykakasi
 import os
@@ -13,6 +14,7 @@ conn = None
 
 app.config['SECRET_KEY'] = b'\xd3\x8e\xf4<8\xdc\xb3\x8fHb\xd7\x1a\xb1\x98\x16\xbe'
 app.config.from_object('config.Config')
+migrate = Migrate(app, db)
 db.init_app(app)
 
 class UserForm(Form):
@@ -99,7 +101,8 @@ def new_blog():
 @app.route('/blogs', methods=['POST'])
 def create_blog():
   title = request.form['title']
-  blog = Blog(title=title)
+  body = request.form['body']
+  blog = Blog(title=title, body=body)
   blog.save()
   return redirect(url_for('show_blog', id=blog.id))
 
@@ -117,7 +120,8 @@ def edit_blog(id):
 def update_blog(id):
   blog = Blog.find(id)
   title = request.json['title']
-  blog.update(title)
+  body = request.json['body']
+  blog.update(title, body)
   return jsonify({ 'status': 'success' })
 
 @app.route('/blogs/<int:id>', methods=['DELETE'])

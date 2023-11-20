@@ -9,6 +9,8 @@
     <dd>{{ blog.id }}</dd>
     <dt>Title:</dt>
     <dd>{{ blog.title }}</dd>
+    <dt>Body:</dt>
+    <dd>{{ blog.body }}</dd>
   </dl>
 
   <a href="{{ url_for('edit_blog', id=blog.id) }}">Edit</a>
