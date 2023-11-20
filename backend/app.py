@@ -3,6 +3,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField, PasswordField, validators
 from models.blog import Blog
+from models.user import User
 from database import db
 from flask_migrate import Migrate
 
@@ -37,53 +38,6 @@ class Kakash:
   @classmethod
   def japanese_to_ascii(cls, text):
     return cls.conv.do(text)
-
-class User:
-  def __init__(self, id, name, age, icon, is_logged_in):
-    self.id = id
-    self.name = name
-    self.age = age
-    self.icon = icon
-    self.is_logged_in = is_logged_in
-
-  def is_adult(self):
-    return self.age >= 20
-
-  def __str__(self):
-    return '<User id:{}, name:{}, email:{}, password:{}, password_confirm:{}, age:{}, icon:{}, is_logged_in:{}>'.format(
-      self.id,
-      self.name,
-      self.email,
-      self.password,
-      self.password_confirm,
-      self.age,
-      self.icon,
-      self.is_logged_in
-    )
-
-  @staticmethod
-  def all():
-    return [
-      User(1, '太郎', 20, 'icon1.png', True),
-      User(2, '次郎', 25, 'icon2.png', False),
-      User(3, '花子', 30, 'icon3.png', True),
-      User(4, '一郎', 35, 'icon4.png', False),
-      User(5, '幸子', 40, 'icon5.png', True)
-    ]
-
-  @staticmethod
-  def find(id):
-    for user in User.all():
-      if user.id == id:
-        return user
-    return None
-
-
-
-@app.template_filter('birth_year')
-def birth_year(age):
-  current_year = datetime.now().year
-  return current_year - age
 
 @app.route('/')
 def index():
@@ -137,6 +91,11 @@ def signup():
     return render_template('signup.html', form=form)
   elif request.method == 'POST':
     if form.validate():
+      user = User(name=form.name.data,
+                  email=form.email.data,
+                  password=form.password.data,
+                  password_confirm=form.password_confirm.data)
+      user.save()
       return redirect(url_for('thanks'))
     else:
       return render_template('signup.html', form=form)

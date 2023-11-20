@@ -9,7 +9,6 @@
       <tr>
         <th>Name</th>
         <th>Age</th>
-        <th>Birth Year</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -22,7 +21,6 @@
             </a>
           </td>
           <td>{{ user.age }}</td>
-          <td>{{ user.age|birth_year }}</td>
           <td>
             {% if user.is_logged_in %}
               ログイン中
