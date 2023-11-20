@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}ブログの編集{% endblock %}
+{% block content %}
+  <h1>ブログの編集</h1>
+
+  <form id="editForm">
+    <input type="hidden" id="id" name="id" value="{{ blog.id }}">
+    <dl>
+      <dt>Title:</dt>
+      <dd><input type="text" id="title" name="title" value="{{ blog.title }}"></dd>
+    </dl>
+    <input type="submit" value="送信">
+  </form>
+
+  <a href="{{ url_for('index_blog') }}">戻る</a>
+
+  <script>
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('id').value;
+      const title = document.getElementById('title').value;
+
+      fetch('/blogs/' + id, {
+          method: 'PATCH',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              title: title
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if(data.status === 'success') {
+            window.location.href = '/blogs/' + id
+          }
+        }
+      )
+      .catch(error =>
+        console.error('Error:', error)
+      );
+  });
+
+  </script>
+{% endblock %}

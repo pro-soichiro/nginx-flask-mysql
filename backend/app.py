@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField, PasswordField, validators
@@ -87,25 +87,44 @@ def birth_year(age):
 def index():
   return render_template('index.html')
 
-@app.route('/blogs/<int:id>')
-def blog(id):
-  blog = Blog.find(id)
-  return render_template('blog.html', blog=blog)
-
-@app.route('/blogs', methods=['GET', 'POST'])
-def blogs():
-  if request.method == 'GET':
-    blogs = Blog.all()
-    return render_template('blogs.html', blogs=blogs)
-  elif request.method == 'POST':
-    title = request.form['title']
-    blog = Blog(title=title)
-    blog.save()
-    return redirect(url_for('blog', id=blog.id))
+@app.route('/blogs', methods=['GET'])
+def index_blog():
+  blogs = Blog.all()
+  return render_template('blogs.html', blogs=blogs)
 
 @app.route('/blogs/new')
 def new_blog():
   return render_template('new_blog.html')
+
+@app.route('/blogs', methods=['POST'])
+def create_blog():
+  title = request.form['title']
+  blog = Blog(title=title)
+  blog.save()
+  return redirect(url_for('show_blog', id=blog.id))
+
+@app.route('/blogs/<int:id>', methods=['GET'])
+def show_blog(id):
+  blog = Blog.find(id)
+  return render_template('blog.html', blog=blog)
+
+@app.route('/blogs/<int:id>/edit')
+def edit_blog(id):
+  blog = Blog.find(id)
+  return render_template('edit_blog.html', blog=blog)
+
+@app.route('/blogs/<int:id>', methods=['PATCH'])
+def update_blog(id):
+  blog = Blog.find(id)
+  title = request.json['title']
+  blog.update(title)
+  return jsonify({ 'status': 'success' })
+
+@app.route('/blogs/<int:id>', methods=['DELETE'])
+def delete_blog(id):
+  blog = Blog.find(id)
+  blog.delete()
+  return jsonify({ 'status': 'success' })
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

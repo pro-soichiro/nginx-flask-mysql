@@ -11,5 +11,26 @@
     <dd>{{ blog.title }}</dd>
   </dl>
 
-  <a href="{{ url_for('blogs') }}">Back to Blog List</a>
+  <a href="{{ url_for('edit_blog', id=blog.id) }}">Edit</a>
+  <a style="cursor: pointer; color: red;" id="delete-button" data-id="{{ blog.id }}">Delete</a>
+  <a href="{{ url_for('index_blog') }}">Back to Blog List</a>
+
+  <script>
+    document.getElementById('delete-button').addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+
+        fetch('/blogs/' + id, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === 'success') {
+            window.location.href = '/blogs';
+          }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+    </script>
 {% endblock %}
