@@ -11,6 +11,8 @@ class User(db.Model):
     age = db.Column(db.Integer)
     icon = db.Column(db.String(255))
     is_logged_in = db.Column(db.Boolean)
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp())
 
     @classmethod
     def all(cls):
@@ -18,7 +20,7 @@ class User(db.Model):
 
     @classmethod
     def find(cls, id):
-        return cls.query.filter_by(id=id).first()
+        return cls.query.get(id)
 
     def save(self):
         db.session.add(self)

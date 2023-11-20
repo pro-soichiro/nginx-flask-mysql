@@ -6,6 +6,6 @@ class DevConfig:
         'dbname': 'example'
     })
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = True
 
 Config = DevConfig
