@@ -5,6 +5,8 @@
 
   <form action="{{ url_for('create_blog') }}" method="post">
     <dl>
+      <dt>User_id:</dt>
+      <dd><input type="number" name="user_id"></dd>
       <dt>Title:</dt>
       <dd><input type="text" name="title"></dd>
       <dt>Body:</dt>

@@ -56,7 +56,8 @@ def new_blog():
 def create_blog():
   title = request.form['title']
   body = request.form['body']
-  blog = Blog(title=title, body=body)
+  user_id = request.form['user_id']
+  blog = Blog(title=title, body=body, user_id=user_id)
   blog.save()
   return redirect(url_for('show_blog', id=blog.id))
 

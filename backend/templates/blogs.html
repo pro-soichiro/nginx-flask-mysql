@@ -12,6 +12,10 @@
         <a href="{{ url_for('show_blog', id=blog.id) }}">
           {{ blog.id }}: {{ blog.title }}
         </a>
+        posted by
+        <a href="{{ url_for('user', id=blog.user.id) }}">
+          {{ blog.user.name }}
+        </a>
       </li>
     {% endfor %}
   </ul>
