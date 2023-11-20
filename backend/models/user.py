@@ -4,10 +4,10 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255))
-    email = db.Column(db.String(255))
-    password = db.Column(db.String(255))
-    password_confirm = db.Column(db.String(255))
+    name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    password_confirm = db.Column(db.String(255), nullable=False)
     age = db.Column(db.Integer)
     icon = db.Column(db.String(255))
     is_logged_in = db.Column(db.Boolean)
