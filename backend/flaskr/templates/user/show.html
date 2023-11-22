@@ -26,12 +26,12 @@
     {% for blog in user.blogs %}
       <dt>title</dt>
       <dd>
-        <a href="{{ url_for('show_blog', id=blog.id) }}">
+        <a href="{{ url_for('blog.show', id=blog.id) }}">
           {{ blog.title }}
         </a>
       </dd>
     {% endfor %}
   </dl>
   <hr>
-  <a href="{{ url_for('users') }}">Back to User List</a>
+  <a href="{{ url_for('user.index') }}">Back to User List</a>
 {% endblock %}

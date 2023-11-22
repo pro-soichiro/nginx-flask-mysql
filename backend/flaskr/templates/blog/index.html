@@ -4,16 +4,16 @@
 {% block content %}
   <h1>Blogs</h1>
 
-  <a href="{{ url_for('new_blog') }}">New Blog</a>
+  <a href="{{ url_for('blog.new') }}">New Blog</a>
 
   <ul>
     {% for blog in blogs %}
       <li>
-        <a href="{{ url_for('show_blog', id=blog.id) }}">
+        <a href="{{ url_for('blog.show', id=blog.id) }}">
           {{ blog.id }}: {{ blog.title }}
         </a>
         posted by
-        <a href="{{ url_for('user', id=blog.user.id) }}">
+        <a href="{{ url_for('user.show', id=blog.user.id) }}">
           {{ blog.user.name }}
         </a>
       </li>

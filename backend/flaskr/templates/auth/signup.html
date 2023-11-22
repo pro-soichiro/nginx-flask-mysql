@@ -4,7 +4,7 @@
   <h1>サインアップ</h1>
 
   {% from "_formhelpers.html" import render_field %}
-  <form action="{{ url_for('signup') }}" method="post">
+  <form action="{{ url_for('auth.signup') }}" method="post">
     {{ form.csrf_token }}
     <dl>
       {{ render_field(form.name) }}

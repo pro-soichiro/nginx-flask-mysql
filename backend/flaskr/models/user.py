@@ -1,4 +1,4 @@
-from database import db
+from flaskr.database import db
 
 class User(db.Model):
     __tablename__ = 'users'

@@ -9,11 +9,11 @@
   <header>
     <nav>
       <ul>
-        <li><a href="{{ url_for('index') }}">ホーム</a></li>
-        <li><a href="{{ url_for('users') }}">ユーザー</a></li>
-        <li><a href="{{ url_for('index_blog') }}">ブログ</a></li>
-        <li><a href="{{ url_for('signup') }}">サインアップ</a></li>
-        <li><a href="{{ url_for('terms') }}">利用規約</a></li>
+        <li><a href="{{ url_for('main.index') }}">ホーム</a></li>
+        <li><a href="{{ url_for('user.index') }}">ユーザー</a></li>
+        <li><a href="{{ url_for('blog.index') }}">ブログ</a></li>
+        <li><a href="{{ url_for('auth.signup') }}">サインアップ</a></li>
+        <li><a href="{{ url_for('main.terms') }}">利用規約</a></li>
       </ul>
     </nav>
   </header>

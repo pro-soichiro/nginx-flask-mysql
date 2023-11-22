@@ -1,4 +1,4 @@
-from database import db
+from flaskr.database import db
 
 class Blog(db.Model):
     __tablename__ = 'blogs'
