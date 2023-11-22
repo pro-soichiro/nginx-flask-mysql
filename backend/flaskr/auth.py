@@ -1,12 +1,12 @@
 from flask import request, render_template, redirect, url_for, Blueprint
 from flaskr.models.user import User
-from flaskr.models.userForm import UserForm
+from flaskr.models.forms import CreateForm
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    form = UserForm(request.form)
+    form = CreateForm(request.form)
     if request.method == 'GET':
         return render_template('auth/signup.html', form=form)
     elif request.method == 'POST':

@@ -9,6 +9,7 @@
       <tr>
         <th>Name</th>
         <th>Age</th>
+        <th>Birthday</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -21,6 +22,7 @@
             </a>
           </td>
           <td>{{ user.age }}</td>
+          <td>{{ user.birthday }}</td>
           <td>
             {% if user.is_logged_in %}
               ログイン中

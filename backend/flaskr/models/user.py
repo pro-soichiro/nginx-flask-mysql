@@ -1,4 +1,5 @@
 from flaskr.database import db
+from datetime import date
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -8,7 +9,7 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     password_confirm = db.Column(db.String(255), nullable=False)
-    age = db.Column(db.Integer)
+    birthday = db.Column(db.DateTime)
     icon = db.Column(db.String(255))
     is_logged_in = db.Column(db.Boolean)
     blogs = db.relationship('Blog', backref='user', lazy=True)
@@ -27,14 +28,13 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def __repr__(self):
-        return '<User id:{}, name:{}, email:{}, password:{}, password_confirm:{}, age:{}, icon:{}, is_logged_in:{}>'.format(
-            self.id,
-            self.name,
-            self.email,
-            self.password,
-            self.password_confirm,
-            self.age,
-            self.icon,
-            self.is_logged_in
-        )
+        def __repr__(self):
+            return f'<User id:{self.id}, name:{self.name}, email:{self.email}, \
+                password:{self.password}, password_confirm:{self.password_confirm}, \
+                birthday:{self.birthday}, icon:{self.icon}, is_logged_in:{self.is_logged_in}>'
+
+    def age(self):
+        if self.birthday is None:
+            return None
+        today = date.today()
+        return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
