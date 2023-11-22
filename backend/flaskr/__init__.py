@@ -15,7 +15,7 @@ def create_app():
     app.register_blueprint(main.bp)
     app.config['SECRET_KEY'] = b'\xd3\x8e\xf4<8\xdc\xb3\x8fHb\xd7\x1a\xb1\x98\x16\xbe'
     app.config.from_object('flaskr.config.Config')
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, directory='flaskr/migrations')
     db.init_app(app)
 
     return app
