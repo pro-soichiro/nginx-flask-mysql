@@ -3,6 +3,8 @@ from flaskr.models.user import User
 from flaskr.models.forms import UpdateForm
 from flask_login import login_required, current_user
 from datetime import datetime
+from werkzeug.utils import secure_filename
+from flaskr.utils.kakash import Kakash
 
 bp = Blueprint('user', __name__, url_prefix='/users')
 
@@ -43,10 +45,12 @@ def update(id):
         user.birthday = request.form['birthday']
         file = request.files['icon']
         if file:
-            file_name = str(user.id) + '_' + str(int(datetime.now().timestamp())) + '_' + file.filename
-            icon_path = 'flaskr/static/images/tmp/' + file_name
+            ascii_filename = Kakash.japanese_to_ascii(file.filename)
+            filename = secure_filename(ascii_filename)
+            save_filename = str(user.id) + '_' + str(int(datetime.now().timestamp())) + '_' + filename
+            icon_path = 'flaskr/static/images/tmp/' + save_filename
             open(icon_path, 'wb').write(file.read())
-            user.icon = 'images/tmp/' + file_name
+            user.icon = 'images/tmp/' + save_filename
             user.save()
             return jsonify({ 'status': 'success' })
     else:
