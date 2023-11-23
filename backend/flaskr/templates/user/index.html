@@ -10,7 +10,6 @@
         <th>Name</th>
         <th>Age</th>
         <th>Birthday</th>
-        <th>Status</th>
       </tr>
     </thead>
     <tbody>
@@ -23,13 +22,6 @@
           </td>
           <td>{{ user.age }}</td>
           <td>{{ user.birthday and user.birthday.strftime('%Y/%m/%d') }}</td>
-          <td>
-            {% if user.is_logged_in %}
-              ログイン中
-            {% else %}
-              ログアウト中
-            {% endif %}
-          </td>
         </tr>
       {% endfor %}
     </tbody>

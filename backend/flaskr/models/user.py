@@ -20,7 +20,6 @@ class User(UserMixin, db.Model):
     )
     birthday = db.Column(db.DateTime)
     icon = db.Column(db.String(255))
-    is_logged_in = db.Column(db.Boolean)
     blogs = db.relationship('Blog', backref='user', lazy=True)
     is_active = db.Column(db.Boolean, unique=False, default=False)
     create_at = db.Column(db.DateTime, default=datetime.now)
@@ -59,8 +58,7 @@ class User(UserMixin, db.Model):
                         email:{self.email}, \
                         password:{self.password} \
                         birthday:{self.birthday}, \
-                        icon:{self.icon}, \
-                        is_logged_in:{self.is_logged_in}>'
+                        icon:{self.icon}'
 
     def save_new_password(self, new_password):
         self.password = generate_password_hash(new_password)
