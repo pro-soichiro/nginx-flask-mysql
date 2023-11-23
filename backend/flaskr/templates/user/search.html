@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}ユーザー検索{% endblock %}
+
+{% block content %}
+  <h1>ユーザー検索</h1>
+
+  {% from "_formhelpers.html" import render_field %}
+  <form action="{{ url_for('user.search') }}" method="post">
+    <dl>
+      {{ form.ctrf_token }}
+      {{ render_field(form.name) }}
+      {{ form.submit() }}
+    </dl>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Icon</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if users %}
+        {% for user in users %}
+          <tr>
+            <td>
+              {% if user.icon %}
+                <img src="{{ url_for('static', filename=user.icon) }}" alt="icon" width="50" height="50">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('user.show', id=user.id) }}">
+                {{ user.name }}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="2">ユーザーが見つかりませんでした。</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endblock %}

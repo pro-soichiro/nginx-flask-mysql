@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flaskr.models.user import User
-from flaskr.models.forms import UpdateForm
+from flaskr.models.forms import UpdateForm, UserSearchForm
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -53,3 +53,14 @@ def delete(id):
         return render_template('not_found.html'), 404
     user.delete()
     return jsonify({ 'status': 'success' })
+
+@bp.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    form = UserSearchForm(request.form)
+    users = None
+    if request.method == 'POST' and form.validate():
+        name = form.name.data
+        users = User.find_by_name(name)
+        print(users)
+    return render_template('user/search.html', form=form, users=users)

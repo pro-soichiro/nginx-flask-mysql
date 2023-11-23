@@ -1,7 +1,7 @@
 from flaskr.database import db
 from datetime import date, datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flaskr.login import login_manager
 
 @login_manager.user_loader
@@ -43,6 +43,14 @@ class User(UserMixin, db.Model):
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter(
+            cls.name.like(f'%{name}%'),
+            cls.id != current_user.id,
+            cls.is_active == True
+        ).with_entities(cls.id, cls.name, cls.icon).all()
 
     def save(self):
         db.session.add(self)

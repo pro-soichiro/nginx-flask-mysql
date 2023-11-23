@@ -81,3 +81,7 @@ class BlogForm(Form):
     title = StringField('タイトル', [Length(min=1, max=100)])
     body = TextAreaField('内容', [Length(min=1, max=1000)])
     submit = SubmitField('投稿')
+
+class UserSearchForm(Form):
+    name = StringField('名前', [DataRequired()])
+    submit = SubmitField('検索')
