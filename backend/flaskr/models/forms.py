@@ -12,12 +12,9 @@ from flaskr.models.user import User
 class CreateForm(Form):
     name = StringField('名前',
                        [validators.Length(min=4, max=35)],
-                       render_kw={"placeholder": "山田 太郎"}
-                       )
-    email = StringField('メールアドレス',
-                        [validators.Length(min=6, max=35)],
-                        render_kw={"placeholder": "sample@example.com"}
-                        )
+                       render_kw={"placeholder": "山田 太郎"})
+    email = StringField('メールアドレス', [validators.Email()],
+                        render_kw={"placeholder": "sample@example.com"})
     submit = SubmitField('サインアップ')
 
     def validate_email(self, field):
@@ -33,8 +30,23 @@ class ResetPasswordForm(Form):
     password_confirm = PasswordField('パスワードの確認', [validators.DataRequired()])
     submit = SubmitField('パスワードの設定')
 
+class ForgotPasswordForm(Form):
+    email = StringField('メールアドレス', [
+        validators.Length(min=6, max=35),
+        validators.DataRequired(),
+        validators.Email()
+    ])
+    submit = SubmitField('パスワードをリセットする')
+
+    def validate_email(self, field):
+        if not User.find_by_email(field.data):
+            raise validators.ValidationError('このメールアドレスは登録されていません')
+
 class LoginForm(Form):
-    email = StringField('メールアドレス', [validators.Length(min=6, max=35)])
+    email = StringField('メールアドレス', [
+        validators.Email(),
+        validators.DataRequired()
+    ])
     password = PasswordField('パスワード', [validators.DataRequired()])
     submit = SubmitField('ログイン')
 
