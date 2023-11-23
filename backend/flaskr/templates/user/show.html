@@ -4,7 +4,9 @@
 {% block content %}
   <h1>User Info</h1>
 
-  <img src="{{ url_for('static', filename=user.icon) }}" alt="" width="100">
+  {% if user.icon %}
+    <img src="{{ url_for('static', filename=user.icon) }}" alt="" width="100">
+  {% endif %}
 
   <dl>
     <dt>Name</dt>
@@ -12,7 +14,7 @@
     <dt>Email</dt>
     <dd>{{ user.email }}</dd>
     <dt>Birthday</dt>
-    <dd>{{ user.birthday.strftime('%Y/%m/%d') }}
+    <dd>{{ user.birhday and user.birthday.strftime('%Y/%m/%d') }}
       {% if user.birthday %}
         ({{ user.age }})
       {% endif %}

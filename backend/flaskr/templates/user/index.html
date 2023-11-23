@@ -22,7 +22,7 @@
             </a>
           </td>
           <td>{{ user.age }}</td>
-          <td>{{ user.birthday }}</td>
+          <td>{{ user.birthday and user.birthday.strftime('%Y/%m/%d') }}</td>
           <td>
             {% if user.is_logged_in %}
               ログイン中
