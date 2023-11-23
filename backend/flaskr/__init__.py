@@ -19,7 +19,7 @@ def create_app():
     app.config['SECRET_KEY'] = b'\xd3\x8e\xf4<8\xdc\xb3\x8fHb\xd7\x1a\xb1\x98\x16\xbe'
     app.config.from_object('flaskr.config.Config')
     db.init_app(app)
-    migrate.init_app(app, db, directory='flaskr/migrations')
+    migrate.init_app(app, db)
     login_manager.init_app(app)
 
     return app
