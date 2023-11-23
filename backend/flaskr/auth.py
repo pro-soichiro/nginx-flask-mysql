@@ -1,8 +1,14 @@
 from flask import request, render_template, redirect, url_for, Blueprint, flash
 from flaskr.models.user import User
 from flaskr.models.password_reset_token import PasswordResetToken
-from flaskr.models.forms import CreateForm, LoginForm, ResetPasswordForm, ForgotPasswordForm
-from flask_login import login_user, logout_user
+from flaskr.models.forms import (
+    CreateForm,
+    LoginForm,
+    ResetPasswordForm,
+    ForgotPasswordForm,
+    ChangePasswordForm
+)
+from flask_login import login_user, logout_user, login_required, current_user
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -15,7 +21,8 @@ def signup():
         user.save()
         token = PasswordResetToken.publish_token(user)
         # shuold be send email
-        print(f'###### Publish token: http://localhost/auth/reset_password/{token}')
+        print(f'###### Publish token: \
+                http://localhost/auth/reset_password/{token}')
         flash('Please check your email.')
         return redirect(url_for('auth.thanks'))
     return render_template('auth/signup.html', form=form)
@@ -44,7 +51,8 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         user = User.find_by_email(form.email.data)
-        if user and user.is_active and user.validate_password(form.password.data):
+        if user and user.is_active and \
+            user.validate_password(form.password.data):
             login_user(user)
             next = request.args.get('next')
             if not next:
@@ -71,6 +79,18 @@ def forgot_password():
         if user:
             token = PasswordResetToken.publish_token(user)
             # shuold be send email
-            print(f'###### Publish token: http://localhost/auth/reset_password/{token}')
+            print(f'###### Publish token: \
+                    http://localhost/auth/reset_password/{token}')
         flash('Please check your email.')
     return render_template('auth/forgot_password.html', form=form)
+
+@bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User.find(current_user.id)
+        user.save_new_password(form.new_password.data)
+        flash('Password has been changed.')
+        return redirect(url_for('main.index'))
+    return render_template('auth/change_password.html', form=form)
