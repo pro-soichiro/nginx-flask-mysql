@@ -45,12 +45,18 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         user = User.find_by_email(form.email.data)
-        if user and user.validate_password(form.password.data):
+        if user and user.is_active and user.validate_password(form.password.data):
             login_user(user)
             next = request.args.get('next')
             if not next:
                 next = url_for('main.index')
             return redirect(next)
+        elif not user:
+            flash('User not found')
+        elif not user.is_active:
+            flash('User is not active')
+        elif user.validate_password(form.password.data):
+            flash('Password is wrong')
     return render_template('auth/login.html', form=form)
 
 @bp.route('/logout')
