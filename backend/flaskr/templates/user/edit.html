@@ -12,6 +12,7 @@
       {{ render_field(form.name) }}
       {{ render_field(form.email) }}
       {{ render_field(form.birthday) }}
+      {{ render_field(form.icon) }}
     </dl>
     {{ form.submit() }}
   </form>
@@ -26,17 +27,18 @@
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const birthday = document.getElementById('birthday').value;
+      const icon = document.getElementById('icon').files[0];
+
+      const fb = new FormData();
+      fb.append('id', id);
+      fb.append('name', name);
+      fb.append('email', email);
+      fb.append('birthday', birthday);
+      fb.append('icon', icon);
 
       fetch('/users/' + id, {
           method: 'PATCH',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            birthday: birthday
-          })
+          body: fb
       })
       .then(response => response.json())
       .then(data => {

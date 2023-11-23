@@ -4,8 +4,7 @@
 {% block content %}
   <h1>User Info</h1>
 
-  <a href="{{ url_for('user.edit', id=user.id) }}">Edit</a>
-  <a style="cursor: pointer; color: red;" id="delete-button" data-id="{{ user.id }}">Delete</a>
+  <img src="{{ url_for('static', filename=user.icon) }}" alt="" width="100">
 
   <dl>
     <dt>Name</dt>
@@ -13,7 +12,7 @@
     <dt>Email</dt>
     <dd>{{ user.email }}</dd>
     <dt>Birthday</dt>
-    <dd>{{ user.birthday }}
+    <dd>{{ user.birthday.strftime('%Y/%m/%d') }}
       {% if user.birthday %}
         ({{ user.age }})
       {% endif %}
@@ -41,23 +40,4 @@
   </dl>
   <hr>
   <a href="{{ url_for('user.index') }}">Back to User List</a>
-
-  <script>
-    document.getElementById('delete-button').addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-
-        fetch('/users/' + id, {
-            method: 'DELETE',
-        })
-        .then(response => response.json())
-        .then(data => {
-          if(data.status === 'success') {
-            window.location.href = '/users';
-          }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    });
-  </script>
 {% endblock %}

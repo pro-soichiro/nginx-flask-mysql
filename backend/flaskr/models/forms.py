@@ -5,9 +5,11 @@ from wtforms import (
     PasswordField,
     validators,
     HiddenField,
-    DateField
+    DateField,
+    FileField
 )
 from flaskr.models.user import User
+from flask_login import current_user
 
 class CreateForm(Form):
     name = StringField('名前',
@@ -53,6 +55,17 @@ class LoginForm(Form):
 class UpdateForm(Form):
     id = HiddenField()
     name = StringField('名前', [validators.Length(min=4, max=35)])
-    email = StringField('メールアドレス', [validators.Length(min=6, max=35)])
+    email = StringField('メールアドレス', [validators.Email(), validators.DataRequired()])
+    icon = FileField('アイコン')
     birthday = DateField('生年月日')
     submit = SubmitField('更新')
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        user = User.find(self.id.data)
+        if user is None:
+            return False
+        if user.id != int(current_user.id):
+            return False
+        return True

@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
 from flaskr.models.user import User
 from flaskr.models.forms import UpdateForm
-from flask_login import login_required
+from flask_login import login_required, current_user
+from datetime import datetime
 
 bp = Blueprint('user', __name__, url_prefix='/users')
 
@@ -23,7 +24,7 @@ def show(id):
 @login_required
 def edit(id):
     user = User.find(id)
-    if user is None:
+    if user is None or current_user.id != id:
         return render_template('not_found.html'), 404
     form = UpdateForm(request.form, obj=user)
     return render_template('user/edit.html', form=form)
@@ -32,16 +33,22 @@ def edit(id):
 @login_required
 def update(id):
     user = User.find(id)
-    if user is None:
+    if user is None or current_user.id != id:
         return render_template('not_found.html'), 404
 
-    user.name = request.json['name']
-    user.email = request.json['email']
-    user.birthday = request.json['birthday']
     form = UpdateForm(request.form, obj=user)
     if form.validate():
-        user.save()
-        return jsonify({ 'status': 'success' })
+        user.name = request.form['name']
+        user.email = request.form['email']
+        user.birthday = request.form['birthday']
+        file = request.files['icon']
+        if file:
+            file_name = str(user.id) + '_' + str(int(datetime.now().timestamp())) + '_' + file.filename
+            icon_path = 'flaskr/static/images/' + file_name
+            open(icon_path, 'wb').write(file.read())
+            user.icon = 'images/' + file_name
+            user.save()
+            return jsonify({ 'status': 'success' })
     else:
         return jsonify({ 'status': 'error', 'errors': form.errors })
 
