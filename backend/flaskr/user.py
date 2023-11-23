@@ -22,24 +22,14 @@ def show(id):
         return render_template('not_found.html'), 404
     return render_template('user/show.html', user=user)
 
-@bp.route('/<int:id>/edit')
+@bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(id):
     user = User.find(id)
     if user is None or current_user.id != id:
         return render_template('not_found.html'), 404
     form = UpdateForm(request.form, obj=user)
-    return render_template('user/edit.html', form=form)
-
-@bp.route('/<int:id>', methods=['PATCH'])
-@login_required
-def update(id):
-    user = User.find(id)
-    if user is None or current_user.id != id:
-        return render_template('not_found.html'), 404
-
-    form = UpdateForm(request.form, obj=user)
-    if form.validate():
+    if request.method == 'POST' and form.validate():
         user.name = request.form['name']
         user.email = request.form['email']
         user.birthday = request.form['birthday']
@@ -52,9 +42,8 @@ def update(id):
             open(icon_path, 'wb').write(file.read())
             user.icon = 'images/tmp/' + save_filename
             user.save()
-            return jsonify({ 'status': 'success' })
-    else:
-        return jsonify({ 'status': 'error', 'errors': form.errors })
+        return render_template('user/show.html', user=user)
+    return render_template('user/edit.html', form=form)
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @login_required

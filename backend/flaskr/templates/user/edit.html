@@ -4,10 +4,8 @@
   <h1>プロフィール編集</h1>
 
   {% from "_formhelpers.html" import render_field %}
-  <form id="editForm">
-    <div id="errorMessages" style="color: red;"></div>
+  <form method="post" enctype="multipart/form-data">
     {{ form.csrf_token }}
-    {{ form.id }}
     <dl>
       {{ render_field(form.name) }}
       {{ render_field(form.email) }}
@@ -18,46 +16,4 @@
   </form>
 
   <a href="{{ url_for('user.index') }}">戻る</a>
-
-  <script>
-    document.getElementById('editForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const id = document.getElementById('id').value;
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const birthday = document.getElementById('birthday').value;
-      const icon = document.getElementById('icon').files[0];
-
-      const fb = new FormData();
-      fb.append('id', id);
-      fb.append('name', name);
-      fb.append('email', email);
-      fb.append('birthday', birthday);
-      fb.append('icon', icon);
-
-      fetch('/users/' + id, {
-          method: 'PATCH',
-          body: fb
-      })
-      .then(response => response.json())
-      .then(data => {
-          if(data.status === 'success') {
-            window.location.href = '/users/' + id
-          } else if (data.status === 'error') {
-            let errorMessages = '';
-            for (let key in data.errors) {
-              errorMessages += `${key}: ${data.errors[key].join(', ')}<br>`;
-            }
-            document.getElementById('errorMessages').innerHTML = errorMessages;
-          }
-        }
-      )
-      .catch(error =>
-        console.error('Error:', error)
-      );
-  });
-
-  </script>
-
 {% endblock %}
