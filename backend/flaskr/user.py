@@ -38,3 +38,11 @@ def update(id):
         return jsonify({ 'status': 'success' })
     else:
         return jsonify({ 'status': 'error', 'errors': form.errors })
+
+@bp.route('/<int:id>', methods=['DELETE'])
+def delete(id):
+    user = User.find(id)
+    if user is None:
+        return render_template('not_found.html'), 404
+    user.delete()
+    return jsonify({ 'status': 'success' })

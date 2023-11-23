@@ -33,6 +33,10 @@ class User(db.Model):
                 password:{self.password}, password_confirm:{self.password_confirm}, \
                 birthday:{self.birthday}, icon:{self.icon}, is_logged_in:{self.is_logged_in}>'
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
     @property
     def age(self):
         if self.birthday is None:
