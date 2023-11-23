@@ -3,48 +3,15 @@
 {% block content %}
   <h1>ブログの編集</h1>
 
-  <form id="editForm">
-    <input type="hidden" id="id" name="id" value="{{ blog.id }}">
+  {% from "_formhelpers.html" import render_field %}
+  <form method="post">
     <dl>
-      <dt>Title:</dt>
-      <dd><input type="text" id="title" name="title" value="{{ blog.title }}"></dd>
-      <dt>Body:</dt>
-      <dd><textarea name="body" id="body" cols="30" rows="10">{{ blog.body }}</textarea></dd>
+      {{ form.csrf_token }}
+      {{ render_field(form.title) }}
+      {{ render_field(form.body) }}
     </dl>
     <input type="submit" value="送信">
   </form>
 
   <a href="{{ url_for('blog.index') }}">戻る</a>
-
-  <script>
-    document.getElementById('editForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const id = document.getElementById('id').value;
-      const title = document.getElementById('title').value;
-      const body = document.getElementById('body').value;
-
-      fetch('/blogs/' + id, {
-          method: 'PATCH',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              title: title,
-              body: body
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if(data.status === 'success') {
-            window.location.href = '/blogs/' + id
-          }
-        }
-      )
-      .catch(error =>
-        console.error('Error:', error)
-      );
-  });
-
-  </script>
 {% endblock %}
