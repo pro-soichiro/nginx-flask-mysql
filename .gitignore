@@ -1,1 +1,3 @@
 **/__pycache__/
+backend/flaskr/static/images/tmp/*
+!backend/flaskr/static/images/tmp/.keep

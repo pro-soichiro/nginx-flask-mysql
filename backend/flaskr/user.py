@@ -44,9 +44,9 @@ def update(id):
         file = request.files['icon']
         if file:
             file_name = str(user.id) + '_' + str(int(datetime.now().timestamp())) + '_' + file.filename
-            icon_path = 'flaskr/static/images/' + file_name
+            icon_path = 'flaskr/static/images/tmp/' + file_name
             open(icon_path, 'wb').write(file.read())
-            user.icon = 'images/' + file_name
+            user.icon = 'images/tmp/' + file_name
             user.save()
             return jsonify({ 'status': 'success' })
     else:
