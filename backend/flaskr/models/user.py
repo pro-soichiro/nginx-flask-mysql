@@ -1,5 +1,5 @@
 from flaskr.database import db
-from datetime import date
+from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flaskr.login import login_manager
@@ -14,14 +14,17 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(
+        db.String(128),
+        default=generate_password_hash('snsflaskapp')
+    )
     birthday = db.Column(db.DateTime)
     icon = db.Column(db.String(255))
     is_logged_in = db.Column(db.Boolean)
     blogs = db.relationship('Blog', backref='user', lazy=True)
     is_active = db.Column(db.Boolean, unique=False, default=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp())
+    create_at = db.Column(db.DateTime, default=datetime.now)
+    update_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, name, email, password, birthday=None, icon=None, is_logged_in=None):
         self.name = name
