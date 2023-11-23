@@ -1,14 +1,18 @@
 from flask import Blueprint, render_template, request, jsonify
 from flaskr.models.user import User
 from flaskr.models.forms import UpdateForm
+from flask_login import login_required
+
 bp = Blueprint('user', __name__, url_prefix='/users')
 
 @bp.route('/')
+@login_required
 def index():
     users = User.all()
     return render_template('user/index.html', users=users)
 
 @bp.route('/<int:id>')
+@login_required
 def show(id):
     user = User.find(id)
     if user is None:
@@ -16,6 +20,7 @@ def show(id):
     return render_template('user/show.html', user=user)
 
 @bp.route('/<int:id>/edit')
+@login_required
 def edit(id):
     user = User.find(id)
     if user is None:
@@ -24,6 +29,7 @@ def edit(id):
     return render_template('user/edit.html', form=form)
 
 @bp.route('/<int:id>', methods=['PATCH'])
+@login_required
 def update(id):
     user = User.find(id)
     if user is None:
@@ -40,6 +46,7 @@ def update(id):
         return jsonify({ 'status': 'error', 'errors': form.errors })
 
 @bp.route('/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     user = User.find(id)
     if user is None:

@@ -7,6 +7,7 @@ from wtforms import (
     HiddenField,
     DateField
 )
+from flaskr.models.user import User
 
 class CreateForm(Form):
     name = StringField('名前',
@@ -19,10 +20,20 @@ class CreateForm(Form):
                         )
     password = PasswordField('パスワード',[
                         validators.DataRequired(),
-                        validators.EqualTo('password_confirm', message='Passwords must match')
+                        validators.EqualTo('password_confirm',
+                                           message='パスワードが一致しません')
                         ])
-    password_confirm = PasswordField('パスワードの確認')
+    password_confirm = PasswordField('パスワードの確認', [validators.DataRequired()])
     submit = SubmitField('サインアップ')
+
+    def validate_email(self, field):
+        if User.find_by_email(field.data):
+            raise validators.ValidationError('このメールアドレスは既に登録されています')
+
+class LoginForm(Form):
+    email = StringField('メールアドレス', [validators.Length(min=6, max=35)])
+    password = PasswordField('パスワード', [validators.DataRequired()])
+    submit = SubmitField('ログイン')
 
 class UpdateForm(Form):
     id = HiddenField()
