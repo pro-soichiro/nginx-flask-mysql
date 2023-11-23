@@ -3,16 +3,15 @@
 {% block content %}
   <h1>ブログの投稿</h1>
 
-  <form action="{{ url_for('blog.create') }}" method="post">
+  {% from "_formhelpers.html" import render_field %}
+
+  <form method="post">
     <dl>
-      <dt>User_id:</dt>
-      <dd><input type="number" name="user_id"></dd>
-      <dt>Title:</dt>
-      <dd><input type="text" name="title"></dd>
-      <dt>Body:</dt>
-      <dd><textarea name="body" id="body" cols="30" rows="10"></textarea></dd>
+      {{ form.csrf_token }}
+      {{ render_field(form.title) }}
+      {{ render_field(form.body) }}
     </dl>
-    <input type="submit" value="送信">
+    {{ render_field(form.submit) }}
   </form>
 
   <a href="{{ url_for('blog.index') }}">戻る</a>

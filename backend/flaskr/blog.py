@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flaskr.models.blog import Blog
-from flask_login import login_required
+from flaskr.models.forms import BlogForm
+from flask_login import login_required, current_user
 bp = Blueprint('blog', __name__, url_prefix='/blogs')
 
 @bp.route('/', methods=['GET'])
@@ -9,20 +10,15 @@ def index():
     blogs = Blog.all()
     return render_template('/blog/index.html', blogs=blogs)
 
-@bp.route('/new')
+@bp.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
-    return render_template('/blog/new.html')
-
-@bp.route('/', methods=['POST'])
-@login_required
-def create():
-    title = request.form['title']
-    body = request.form['body']
-    user_id = request.form['user_id']
-    blog = Blog(title=title, body=body, user_id=user_id)
-    blog.save()
-    return redirect(url_for('blog.show', id=blog.id))
+    form = BlogForm(request.form)
+    if request.method == 'POST' and form.validate():
+        blog = Blog(title=form.title.data, body=form.body.data, user_id=current_user.id)
+        blog.save()
+        return redirect(url_for('blog.show', id=blog.id))
+    return render_template('/blog/new.html', form=form)
 
 @bp.route('/<int:id>', methods=['GET'])
 @login_required

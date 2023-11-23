@@ -1,6 +1,7 @@
 from wtforms import (
     Form,
     StringField,
+    TextAreaField,
     SubmitField,
     PasswordField,
     validators,
@@ -69,3 +70,8 @@ class UpdateForm(Form):
         if user.id != int(current_user.id):
             return False
         return True
+
+class BlogForm(Form):
+    title = StringField('タイトル', [validators.Length(min=1, max=100)])
+    body = TextAreaField('内容', [validators.Length(min=1, max=1000)])
+    submit = SubmitField('投稿')
