@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}プロフィール編集{% endblock %}
+{% block content %}
+  <h1>プロフィール編集</h1>
+
+  {% from "_formhelpers.html" import render_field %}
+  <form id="editForm">
+    <div id="errorMessages" style="color: red;"></div>
+    {{ form.csrf_token }}
+    {{ form.id }}
+    <dl>
+      {{ render_field(form.name) }}
+      {{ render_field(form.email) }}
+      {{ render_field(form.birthday) }}
+    </dl>
+    {{ form.submit() }}
+  </form>
+
+  <a href="{{ url_for('user.index') }}">戻る</a>
+
+  <script>
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('id').value;
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const birthday = document.getElementById('birthday').value;
+
+      fetch('/users/' + id, {
+          method: 'PATCH',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            birthday: birthday
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if(data.status === 'success') {
+            window.location.href = '/users/' + id
+          } else if (data.status === 'error') {
+            let errorMessages = '';
+            for (let key in data.errors) {
+              errorMessages += `${key}: ${data.errors[key].join(', ')}<br>`;
+            }
+            document.getElementById('errorMessages').innerHTML = errorMessages;
+          }
+        }
+      )
+      .catch(error =>
+        console.error('Error:', error)
+      );
+  });
+
+  </script>
+
+{% endblock %}

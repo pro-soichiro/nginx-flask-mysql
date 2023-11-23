@@ -26,11 +26,7 @@ class CreateForm(Form):
 
 class UpdateForm(Form):
     id = HiddenField()
-    name = StringField('名前',
-                       [validators.Length(min=4, max=35)],
-                       render_kw={"placeholder": "山田 太郎"}
-                       )
-    email = StringField('メールアドレス',
-                        [validators.Length(min=6, max=35)])
+    name = StringField('名前', [validators.Length(min=4, max=35)])
+    email = StringField('メールアドレス', [validators.Length(min=6, max=35)])
     birthday = DateField('生年月日')
     submit = SubmitField('更新')
