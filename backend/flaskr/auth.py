@@ -1,5 +1,4 @@
 from flask import request, render_template, redirect, url_for, Blueprint, flash
-from flaskr.database import db
 from flaskr.models.user import User
 from flaskr.models.password_reset_token import PasswordResetToken
 from flaskr.models.forms import CreateForm, LoginForm, ResetPasswordForm, ForgotPasswordForm
