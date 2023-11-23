@@ -18,17 +18,20 @@ class CreateForm(Form):
                         [validators.Length(min=6, max=35)],
                         render_kw={"placeholder": "sample@example.com"}
                         )
+    submit = SubmitField('サインアップ')
+
+    def validate_email(self, field):
+        if User.find_by_email(field.data):
+            raise validators.ValidationError('このメールアドレスは既に登録されています')
+
+class ResetPasswordForm(Form):
     password = PasswordField('パスワード',[
                         validators.DataRequired(),
                         validators.EqualTo('password_confirm',
                                            message='パスワードが一致しません')
                         ])
     password_confirm = PasswordField('パスワードの確認', [validators.DataRequired()])
-    submit = SubmitField('サインアップ')
-
-    def validate_email(self, field):
-        if User.find_by_email(field.data):
-            raise validators.ValidationError('このメールアドレスは既に登録されています')
+    submit = SubmitField('パスワードの設定')
 
 class LoginForm(Form):
     email = StringField('メールアドレス', [validators.Length(min=6, max=35)])

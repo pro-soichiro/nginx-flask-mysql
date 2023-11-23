@@ -31,6 +31,7 @@ class PasswordResetToken(db.Model):
             datetime.now() + timedelta(days=1)
         )
         db.session.add(new_token)
+        db.session.commit()
         return token
 
     @classmethod
@@ -41,4 +42,6 @@ class PasswordResetToken(db.Model):
 
     @classmethod
     def delete_token(cls, token):
-        cls.query.filter_by(token=str(token)).delete()
+        record = cls.query.filter_by(token=str(token))
+        record.delete()
+        db.session.commit()

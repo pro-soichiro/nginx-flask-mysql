@@ -1,6 +1,6 @@
 from flaskr.database import db
 from datetime import date, datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flaskr.login import login_manager
 
@@ -26,13 +26,9 @@ class User(UserMixin, db.Model):
     create_at = db.Column(db.DateTime, default=datetime.now)
     update_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, name, email, password, birthday=None, icon=None, is_logged_in=None):
+    def __init__(self, name, email):
         self.name = name
         self.email = email
-        self.password = generate_password_hash(password)
-        self.birthday = birthday
-        self.icon = icon
-        self.is_logged_in = is_logged_in
 
     def validate_password(self, password):
         return check_password_hash(self.password, password)
@@ -53,13 +49,23 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
 
-        def __repr__(self):
-            return f'<User id:{self.id}, name:{self.name}, email:{self.email}, \
-                password:{self.password}, password_confirm:{self.password_confirm}, \
-                birthday:{self.birthday}, icon:{self.icon}, is_logged_in:{self.is_logged_in}>'
-
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return f'<User  id:{self.id}, \
+                        name:{self.name}, \
+                        email:{self.email}, \
+                        password:{self.password} \
+                        birthday:{self.birthday}, \
+                        icon:{self.icon}, \
+                        is_logged_in:{self.is_logged_in}>'
+
+    def save_new_password(self, new_password):
+        self.password = generate_password_hash(new_password)
+        self.is_active = True
+        db.session.add(self)
         db.session.commit()
 
     @property
