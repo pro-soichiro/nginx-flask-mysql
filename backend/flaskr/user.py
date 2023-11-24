@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import (
+    Blueprint, render_template, request, jsonify, session, redirect, url_for
+)
 from flaskr.models.user import User
-from flaskr.models.forms import UpdateForm, UserSearchForm
+from flaskr.models.user_connect import UserConnect
+from flaskr.models.forms import UpdateForm, UserSearchForm, ConnectForm
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -58,9 +61,28 @@ def delete(id):
 @login_required
 def search():
     form = UserSearchForm(request.form)
+    connect_form = ConnectForm()
+    session['url'] = 'user.search'
+
     users = None
     if request.method == 'POST' and form.validate():
         name = form.name.data
         users = User.find_by_name(name)
         print(users)
-    return render_template('user/search.html', form=form, users=users)
+    return render_template(
+        'user/search.html', form=form, users=users, connect_form=connect_form
+    )
+
+@bp.route('/connect', methods=['POST'])
+@login_required
+def connect():
+    form = ConnectForm(request.form)
+    if request.method == 'POST' and form.validate():
+        to_user_id = request.form['to_user_id']
+        status = request.form['connect_condition']
+        if status == 'accept':
+            UserConnect.accept(current_user.id, to_user_id)
+        elif status == 'connect':
+            UserConnect.connect(current_user.id, to_user_id)
+    next_url = session.pop('url', 'main.index')
+    return redirect(url_for(next_url))

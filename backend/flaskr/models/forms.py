@@ -85,3 +85,8 @@ class BlogForm(Form):
 class UserSearchForm(Form):
     name = StringField('名前', [DataRequired()])
     submit = SubmitField('検索')
+
+class ConnectForm(Form):
+    connect_condition = HiddenField()
+    to_user_id = HiddenField()
+    submit = SubmitField()

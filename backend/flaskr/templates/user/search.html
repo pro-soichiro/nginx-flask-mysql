@@ -18,6 +18,7 @@
       <tr>
         <th>Icon</th>
         <th>Name</th>
+        <th>Follow</th>
       </tr>
     </thead>
     <tbody>
@@ -35,6 +36,29 @@
               <a href="{{ url_for('user.show', id=user.id) }}">
                 {{ user.name }}
               </a>
+            </td>
+            <td>
+              {% if user.joined_status_from_to == 1 or user.joined_status_to_from == 1 %}
+                フォロー済み
+              {% elif user.joined_status_from_to == 0 %}
+                申請中
+              {% elif user.joined_status_to_from == 0 %}
+                <form action="{{ url_for('user.connect') }}" method="post">
+                  {{ form.ctrf_token }}
+                  {{ connect_form.csrf_token }}
+                  {{ connect_form.connect_condition(value='accept') }}
+                  {{ connect_form.to_user_id(value=user.id) }}
+                  {{ connect_form.submit(value='承認') }}
+                </form>
+              {% else %}
+                <form action="{{ url_for('user.connect') }}" method="post">
+                  {{ form.ctrf_token }}
+                  {{ connect_form.csrf_token }}
+                  {{ connect_form.connect_condition(value='connect') }}
+                  {{ connect_form.to_user_id(value=user.id) }}
+                  {{ connect_form.submit(value='フォロー') }}
+                </form>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
