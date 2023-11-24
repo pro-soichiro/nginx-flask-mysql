@@ -9,6 +9,8 @@ from flaskr.models.forms import (
     ChangePasswordForm
 )
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
+from flaskr.mail import mail
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -20,9 +22,10 @@ def signup():
                     email=form.email.data)
         user.save()
         token = PasswordResetToken.publish_token(user)
-        # shuold be send email
-        print(f'###### Publish token: \
-                http://localhost/auth/reset_password/{token}')
+        msg = Message('Nginx Flask Mysql: パスワード設定', recipients=[user.email])
+        msg.body = f'Publish token: \
+                    http://localhost/auth/reset_password/{token}'
+        mail.send(msg)
         flash('Please check your email.')
         return redirect(url_for('auth.thanks'))
     return render_template('auth/signup.html', form=form)
@@ -78,9 +81,10 @@ def forgot_password():
         user = User.find_by_email(form.email.data)
         if user:
             token = PasswordResetToken.publish_token(user)
-            # shuold be send email
-            print(f'###### Publish token: \
-                    http://localhost/auth/reset_password/{token}')
+            msg = Message('Nginx Flask Mysql: パスワード再発行', recipients=[user.email])
+            msg.body = f'Publish token: \
+                        http://localhost/auth/reset_password/{token}'
+            mail.send(msg)
         flash('Please check your email.')
     return render_template('auth/forgot_password.html', form=form)
 

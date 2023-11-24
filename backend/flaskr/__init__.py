@@ -6,6 +6,7 @@ from . import blog
 from . import auth
 from . import main
 from flaskr.login import login_manager
+from flaskr.mail import mail
 
 migrate = Migrate()
 
@@ -21,5 +22,6 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    mail.init_app(app)
 
     return app
