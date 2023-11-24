@@ -1,4 +1,5 @@
 from flaskr.database import db
+from datetime import datetime
 
 class Blog(db.Model):
     __tablename__ = 'blogs'
@@ -26,6 +27,7 @@ class Blog(db.Model):
     def update(self, title, body):
         self.title = title
         self.body = body
+        self.update_at = datetime.now()
         db.session.commit()
 
     def delete(self):
