@@ -74,6 +74,52 @@ class User(UserMixin, db.Model):
             user_connect2.status.label('joined_status_from_to')
         ).all()
 
+    @classmethod
+    def friends(cls):
+        return cls.query.join(
+            UserConnect,
+            or_(
+                and_(
+                    UserConnect.to_user_id == cls.id,
+                    UserConnect.from_user_id == current_user.id,
+                    UserConnect.status == 1
+                ),
+                and_(
+                    UserConnect.from_user_id == cls.id,
+                    UserConnect.to_user_id == current_user.id,
+                    UserConnect.status == 1
+                )
+            )
+        ).with_entities(
+            cls.id, cls.name, cls.icon
+        ).all()
+
+    @classmethod
+    def requested_friends(cls):
+        return cls.query.join(
+            UserConnect,
+            and_(
+                UserConnect.from_user_id == cls.id,
+                UserConnect.to_user_id == current_user.id,
+                UserConnect.status == 0
+            )
+        ).with_entities(
+            cls.id, cls.name, cls.icon
+        ).all()
+
+    @classmethod
+    def requesting_friends(cls):
+        return cls.query.join(
+            UserConnect,
+            and_(
+                UserConnect.from_user_id == current_user.id,
+                UserConnect.to_user_id == cls.id,
+                UserConnect.status == 0
+            )
+        ).with_entities(
+            cls.id, cls.name, cls.icon
+        ).all()
+
     def save(self):
         self.update_at = datetime.now()
         db.session.add(self)

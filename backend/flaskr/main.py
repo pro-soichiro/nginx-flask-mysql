@@ -1,10 +1,26 @@
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, session
+from flaskr.models.forms import ConnectForm
+from flaskr.models.user import User
+from flask_login import current_user
 
 bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def index():
-    return render_template('index.html')
+    friends = requested_friends = requesting_friends = None
+    connect_form = ConnectForm()
+    session['url'] = 'main.index'
+    if current_user.is_authenticated:
+        friends = User.friends()
+        requested_friends = User.requested_friends()
+        requesting_friends = User.requesting_friends()
+    return render_template(
+        'index.html',
+        friends=friends,
+        requested_friends=requested_friends,
+        requesting_friends=requesting_friends,
+        connect_form=connect_form
+    )
 
 @bp.route('/terms')
 def terms():

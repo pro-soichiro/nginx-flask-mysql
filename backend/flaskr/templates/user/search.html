@@ -44,7 +44,6 @@
                 申請中
               {% elif user.joined_status_to_from == 0 %}
                 <form action="{{ url_for('user.connect') }}" method="post">
-                  {{ form.ctrf_token }}
                   {{ connect_form.csrf_token }}
                   {{ connect_form.connect_condition(value='accept') }}
                   {{ connect_form.to_user_id(value=user.id) }}
@@ -52,7 +51,6 @@
                 </form>
               {% else %}
                 <form action="{{ url_for('user.connect') }}" method="post">
-                  {{ form.ctrf_token }}
                   {{ connect_form.csrf_token }}
                   {{ connect_form.connect_condition(value='connect') }}
                   {{ connect_form.to_user_id(value=user.id) }}

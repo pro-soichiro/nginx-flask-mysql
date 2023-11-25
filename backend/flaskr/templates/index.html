@@ -2,4 +2,77 @@
 {% block title %}Study Flask{% endblock %}
 {% block content %}
   <h1>メインページです</h1>
+
+  {% if current_user.is_authenticated %}
+    <div>
+      <p>ユーザー名：{{ current_user.name }}</p>
+      <p>メールアドレス：{{ current_user.email }}</p>
+    </div>
+
+    <div>
+      <h2>友達一覧</h2>
+      <table>
+        {% for friend in friends %}
+          <tr>
+            <td>
+              {% if friend.icon %}
+                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
+              {% endif %}
+            </td>
+            <td>{{ friend.name }}</td>
+            <td>メッセージを送る</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div>
+      <h2>申請中一覧</h2>
+      <table>
+        {% for friend in requesting_friends %}
+          <tr>
+            <td>
+              {% if friend.icon %}
+                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
+              {% endif %}
+            </td>
+            <td>{{ friend.name }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div>
+      <h2>友達リクエスト</h2>
+      <table>
+        {% for friend in requested_friends %}
+          <tr>
+            <td>
+              {% if friend.icon %}
+                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
+              {% endif %}
+            </td>
+            <td>{{ friend.name }}</td>
+            <td>
+              <form action="{{ url_for('user.connect') }}" method="post">
+                {{ connect_form.csrf_token }}
+                {{ connect_form.connect_condition(value='accept') }}
+                {{ connect_form.to_user_id(value=friend.id) }}
+                {{ connect_form.submit(value='承認') }}
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+  {% else %}
+    <div>ログイン or サインアップしてください</div>
+  {% endif %}
 {% endblock %}
