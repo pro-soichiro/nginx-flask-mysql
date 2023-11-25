@@ -36,3 +36,8 @@ class Message(db.Model):
                 ),
             )
         ).order_by(cls.create_at).all()
+
+    @classmethod
+    def read(cls, ids):
+        cls.query.filter(cls.id.in_(ids)).update({cls.is_read: True}, synchronize_session=False)
+        db.session.commit()

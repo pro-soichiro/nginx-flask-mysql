@@ -15,6 +15,9 @@ def index(id):
     form = MessageForm(request.form)
     messages = Message.get_friend_messages(current_user.id, id)
     user = User.find(id)
+    read_message_ids = [message.id for message in messages if (not message.is_read) and (message.from_user_id == id)]
+    if read_message_ids:
+        Message.read(read_message_ids)
     if request.method == 'POST' and form.validate():
         message = Message(
             from_user_id=current_user.id,

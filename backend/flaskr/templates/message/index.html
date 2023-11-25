@@ -40,7 +40,6 @@
                     <p style="white-space: pre-wrap;">{{ message.message|urlize }}</p>
                 </div>
                 <div>
-                    <span>{{ '既読' if message.is_read else '未読' }}</span>
                     <span>{{ message.create_at.strftime('%H:%M') }}</span>
                 </div>
             </div>
