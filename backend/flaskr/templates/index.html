@@ -22,7 +22,11 @@
               {% endif %}
             </td>
             <td>{{ friend.name }}</td>
-            <td>メッセージを送る</td>
+            <td>
+              <a href="{{ url_for('message.index', id=friend.id) }}">
+                メッセージを送る
+              </a>
+            </td>
           </tr>
         {% endfor %}
       </table>

@@ -5,6 +5,7 @@ from . import user
 from . import blog
 from . import auth
 from . import main
+from . import message
 from flaskr.login import login_manager
 from flaskr.mail import mail
 
@@ -17,6 +18,7 @@ def create_app():
     app.register_blueprint(blog.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
+    app.register_blueprint(message.bp)
     app.config['SECRET_KEY'] = b'\xd3\x8e\xf4<8\xdc\xb3\x8fHb\xd7\x1a\xb1\x98\x16\xbe'
     app.config.from_object('flaskr.config.Config')
     db.init_app(app)

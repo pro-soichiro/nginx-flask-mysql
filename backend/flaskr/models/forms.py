@@ -12,6 +12,7 @@ from wtforms.validators import (
     DataRequired, Email, EqualTo, Length, ValidationError
 )
 from flaskr.models.user import User
+from flaskr.models.user_connect import UserConnect
 from flask_login import current_user
 
 class CreateForm(Form):
@@ -90,3 +91,16 @@ class ConnectForm(Form):
     connect_condition = HiddenField()
     to_user_id = HiddenField()
     submit = SubmitField()
+
+class MessageForm(Form):
+    to_user_id = HiddenField()
+    message = TextAreaField('メッセージ', [Length(min=1, max=1000)])
+    submit = SubmitField('送信')
+
+    def validate(self):
+        if not super(Form, self).validate():
+            return False
+        is_friend = UserConnect.is_friend(self.to_user_id.data)
+        if not is_friend:
+            return False
+        return True

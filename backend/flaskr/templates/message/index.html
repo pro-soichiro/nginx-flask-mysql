@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}メッセージ{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+  <h1>Message Room</h1>
+
+  <div>
+    {% for message in messages %}
+        {% if message.from_user_id == current_user.id %}
+            <div style="text-align: right;">
+                {% if current_user.icon %}
+                    <img src="{{ url_for('static', filename=current_user.icon) }}" width="50" height="50">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default_icon.png') }}" width="50" height="50">
+                {% endif %}
+                <span>{{ current_user.name }}</span>
+            </div>
+            <div style="text-align: right;">
+                <div>
+                    <p style="white-space: pre-wrap;">{{ message.message|urlize }}</p>
+                </div>
+                <div>
+                    <span>{{ '既読' if message.is_read else '未読' }}</span>
+                    <span>{{ message.create_at.strftime('%H:%M') }}</span>
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: left;">
+                {% if user.icon %}
+                    <img src="{{ url_for('static', filename=user.icon) }}" width="50" height="50">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default_icon.png') }}" width="50" height="50">
+                {% endif %}
+                <span>{{ user.name }}</span>
+            </div>
+            <div style="text-align: left;">
+                <div>
+                    <p style="white-space: pre-wrap;">{{ message.message|urlize }}</p>
+                </div>
+                <div>
+                    <span>{{ '既読' if message.is_read else '未読' }}</span>
+                    <span>{{ message.create_at.strftime('%H:%M') }}</span>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div>
+        <form method="post">
+            {{ form.csrf_token }}
+            {{ form.to_user_id(value=user.id) }}
+            {{ render_field(form.message, cols="50", rows="5")  }}
+            {{ form.submit }}
+        </form>
+    </div>
+
+  </div>
+
+{% endblock %}

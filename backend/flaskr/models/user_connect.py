@@ -1,5 +1,7 @@
 from flaskr.database import db
 from datetime import datetime
+from flask_login import current_user
+from sqlalchemy import and_, or_
 
 class UserConnect(db.Model):
     __tablename__ = 'user_connects'
@@ -30,6 +32,24 @@ class UserConnect(db.Model):
     @classmethod
     def connect(cls, from_user_id, to_user_id):
         cls(from_user_id, to_user_id).save()
+
+    @classmethod
+    def is_friend(cls, to_user_id):
+        user = cls.query.filter(
+            or_(
+                and_(
+                    UserConnect.from_user_id == to_user_id,
+                    UserConnect.to_user_id == current_user.id,
+                    UserConnect.status == 1
+                ),
+                and_(
+                    UserConnect.from_user_id == current_user.id,
+                    UserConnect.to_user_id == to_user_id,
+                    UserConnect.status == 1
+                )
+            ),
+        ).first()
+        return True if user else False
 
     def save(self):
         self.update_at = datetime.now()
