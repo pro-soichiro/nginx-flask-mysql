@@ -26,13 +26,19 @@
         justify-content: space-between;
         padding: 20px;
     }
+    .right {
+        text-align: right;
+    }
+    .left {
+        text-align: left;
+    }
   </style>
 
     <div class="chat-container">
         <div class="chat-box" id="chatBox">
             {% for message in messages %}
                 <div
-                    style="text-align: {{ 'right' if (message.from_user_id == current_user.id) else 'left' }};"
+                    class="{{ 'right' if message.from_user_id == current_user.id else 'left' }}"
                     id="message-{{ message.id }}"
                 >
                     <div>
@@ -144,7 +150,7 @@
         socket.on('new_message', ({ message, from_user}) => {
             const newMessage = document.createElement('div');
             newMessage.setAttribute('id', 'message-' + message.id);
-            newMessage.style.textAlign = from_user.id === currentUserId ? 'right' : 'left';
+            newMessage.setAttribute('class', from_user.id === currentUserId ? 'right' : 'left')
             newMessage.innerHTML = `
             <div>
                 <img src="/static/${from_user.icon}" width="50" height="50">
