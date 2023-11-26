@@ -26,11 +26,7 @@
         {% for user in users %}
           <tr>
             <td>
-              {% if user.icon %}
-                <img src="{{ url_for('static', filename=user.icon) }}" alt="icon" width="50" height="50">
-              {% else %}
-                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
-              {% endif %}
+              <img src="{{ url_for('static', filename=user.icon) }}" alt="icon" width="50" height="50">
             </td>
             <td>
               <a href="{{ url_for('user.show', id=user.id) }}">

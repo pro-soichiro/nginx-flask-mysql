@@ -15,11 +15,7 @@
         {% for friend in friends %}
           <tr>
             <td>
-              {% if friend.icon %}
-                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
-              {% else %}
-                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
-              {% endif %}
+              <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
             </td>
             <td>{{ friend.name }}</td>
             <td>
@@ -38,11 +34,7 @@
         {% for friend in requesting_friends %}
           <tr>
             <td>
-              {% if friend.icon %}
-                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
-              {% else %}
-                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
-              {% endif %}
+              <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
             </td>
             <td>{{ friend.name }}</td>
           </tr>
@@ -56,11 +48,7 @@
         {% for friend in requested_friends %}
           <tr>
             <td>
-              {% if friend.icon %}
-                <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
-              {% else %}
-                <img src="{{ url_for('static', filename='images/default_icon.png') }}" alt="icon" width="50" height="50">
-              {% endif %}
+              <img src="{{ url_for('static', filename=friend.icon) }}" alt="icon" width="50" height="50">
             </td>
             <td>{{ friend.name }}</td>
             <td>
