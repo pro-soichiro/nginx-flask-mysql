@@ -55,6 +55,7 @@ def handle_message(data):
         # 'is_read': messageData.is_read,
         'create_at': messageData.create_at.strftime('%H:%M'),
         'user_name': fromUser.name,
+        'user_icon': fromUser.icon if fromUser.icon else 'images/default_icon.png',
         'user_id': fromUser.id
     }
     send(response_data, room=room)
