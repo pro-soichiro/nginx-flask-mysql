@@ -8,6 +8,7 @@
 <body>
   <header>
     {% if current_user.is_authenticated %}
+      <div>ID: {{ current_user.id }}</div>
       <div>ログインユーザー: {{ current_user.name }}</div>
     {% endif %}
     <nav>
