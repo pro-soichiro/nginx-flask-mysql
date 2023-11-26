@@ -94,13 +94,13 @@ class ConnectForm(Form):
 
 class MessageForm(Form):
     to_user_id = HiddenField()
+    room = HiddenField()
     message = TextAreaField('メッセージ', [Length(min=1, max=1000)])
     submit = SubmitField('送信')
 
     def validate(self):
         if not super(Form, self).validate():
             return False
-        is_friend = UserConnect.is_friend(self.to_user_id.data)
-        if not is_friend:
+        if not UserConnect.is_friend(self.to_user_id.data):
             return False
         return True

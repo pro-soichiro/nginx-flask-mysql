@@ -8,6 +8,7 @@ from . import main
 from . import message
 from flaskr.login import login_manager
 from flaskr.mail import mail
+from flaskr.socketio import socketio
 
 migrate = Migrate()
 
@@ -25,5 +26,6 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     mail.init_app(app)
+    socketio.init_app(app)
 
-    return app
+    return socketio, app

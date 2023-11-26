@@ -22,6 +22,23 @@ class UserConnect(db.Model):
         return cls.query.filter_by(from_user_id=from_user_id, to_user_id=to_user_id).first()
 
     @classmethod
+    def find_room(cls, to_user_id):
+        return cls.query.filter(
+            or_(
+                and_(
+                    UserConnect.from_user_id == to_user_id,
+                    UserConnect.to_user_id == current_user.id,
+                    UserConnect.status == 1
+                ),
+                and_(
+                    UserConnect.from_user_id == current_user.id,
+                    UserConnect.to_user_id == to_user_id,
+                    UserConnect.status == 1
+                )
+            ),
+        ).first()
+
+    @classmethod
     def accept(cls, current_user_id, to_user_id):
         connect = cls.find(to_user_id, current_user_id)
         if connect is None:
