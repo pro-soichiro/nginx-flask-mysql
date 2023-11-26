@@ -28,69 +28,59 @@
     }
   </style>
 
-  <div class="chat-container">
-    <div class="chat-box" id="chatBox">
-        {% for message in messages %}
-            {% if message.from_user_id == current_user.id %}
-                <div style="text-align: right;">
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            {% for message in messages %}
+                <div
+                    style="text-align: {{ 'right' if (message.from_user_id == current_user.id) else 'left' }};"
+                    id="message-{{ message.id }}"
+                >
                     <div>
-                        {% if current_user.icon %}
-                            <img src="{{ url_for('static', filename=current_user.icon) }}" width="50" height="50">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='images/default_icon.png') }}" width="50" height="50">
-                        {% endif %}
-                        <span>{{ current_user.name }}</span>
+                        <img
+                            src="{{ url_for('static', filename=message.from_user.icon) }}"
+                            width="50"
+                            height="50"
+                        >
+                        <span>{{ message.from_user.name }}</span>
                     </div>
                     <div>
                         <div>
                             <p style="white-space: pre-wrap;">{{ message.message|urlize }}</p>
                         </div>
                         <div>
-                            <span>{{ '既読' if message.is_read else '未読' }}</span>
+                            {% if message.from_user_id == current_user.id %}
+                                <span class="read-status">
+                                    {{ '既読' if message.read_status.first().is_read else '未読' }}
+                                </span>
+                            {% endif %}
                             <span>{{ message.create_at.strftime('%H:%M') }}</span>
                         </div>
                     </div>
                 </div>
-            {% else %}
-                <div style="text-align: left;">
-                    <div>
-                        {% if user.icon %}
-                            <img src="{{ url_for('static', filename=user.icon) }}" width="50" height="50">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='images/default_icon.png') }}" width="50" height="50">
-                        {% endif %}
-                        <span>{{ user.name }}</span>
-                    </div>
-                    <div>
-                        <div>
-                            <p style="white-space: pre-wrap;">{{ message.message|urlize }}</p>
-                        </div>
-                        <div>
-                            <span>{{ message.create_at.strftime('%H:%M') }}</span>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="chat-input">
+            <form>
+                {{ form.csrf_token }}
+                {{ form.to_user_id(value=to_user.id) }}
+                {{ form.room(value=room_id) }}
+                {{ render_field(form.message, cols="50", rows="5")  }}
+                {{ form.submit(onclick="sendMessage()", type="button") }}
+            </form>
+        </div>
     </div>
-    <div class="chat-input">
-        <form>
-            {{ form.csrf_token }}
-            {{ form.to_user_id(value=user.id) }}
-            {{ form.room(value=room) }}
-            {{ render_field(form.message, cols="50", rows="5")  }}
-            {{ form.submit(onclick="sendMessage()", type="button") }}
-        </form>
-    </div>
-  </div>
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"
+    >
+    </script>
     <script type="text/javascript" charset="utf-8">
         const socket = io();
+        const messageElement = document.getElementById('message');
         const room = document.getElementById('room').value;
         const toUserId = document.getElementById('to_user_id').value;
-        const messageElement = document.getElementById('message');
         const chatBox = document.getElementById('chatBox');
         const currentUserId = {{ current_user.id }}
 
@@ -98,13 +88,16 @@
 
         socket.on('connect', function() {
             socket.emit('join', {
-                user_id: toUserId,
+                to_user_id: toUserId,
                 room: room
             });
         });
 
         socket.on('join', (data) => {
-            console.log(data)
+            console.log(data.message)
+            data.not_read_message_ids.forEach(messageId => {
+                markMessageAsRead(messageId, currentUserId);
+            });
         })
 
         function sendMessage() {
@@ -118,37 +111,78 @@
                 room: room
             }
 
-            socket.emit('message', data);
+            socket.emit('send_message', data);
             messageElement.value = '';
         }
-
-        socket.on('message', function(data) {
-            const newMessageHtml = `
-            <div style="text-align: ${
-                data.user_id === currentUserId ? 'right' : 'left'
-            };">
-                <div>
-                    <img src="/static/${data.user_icon}" width="50" height="50">
-                    <span>${data.user_name}</span>
-                </div>
-                <div>
-                    <div>
-                        <p style="white-space: pre-wrap;">${data.message}</p>
-                    </div>
-                    <div>
-                        <span>${data.create_at}</span>
-                    </div>
-                </div>
-            </div>`;
-
-            chatBox.insertAdjacentHTML('beforeend', newMessageHtml);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
 
         messageElement.addEventListener('keydown', function(event) {
             // Macの場合は 'metaKey' (コマンドキー), Windows/Linuxの場合は 'ctrlKey' をチェック
             if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
                 sendMessage();
+            }
+        });
+
+        function handleIntersect(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const messageId =
+                        entry.target.getAttribute('id').replace('message-', '');
+
+                    markMessageAsRead(messageId, toUserId);
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        }
+        let options = {
+            root: null, // ビューポートをルートとする
+            rootMargin: '0px',
+            threshold: 0.1 // 少しでも表示されたらトリガー
+        };
+        let observer = new IntersectionObserver(handleIntersect, options);
+
+        socket.on('new_message', ({ message, from_user}) => {
+            const newMessage = document.createElement('div');
+            newMessage.setAttribute('id', 'message-' + message.id);
+            newMessage.style.textAlign = from_user.id === currentUserId ? 'right' : 'left';
+            newMessage.innerHTML = `
+            <div>
+                <img src="/static/${from_user.icon}" width="50" height="50">
+                <span>${from_user.name}</span>
+            </div>
+            <div>
+                <div>
+                    <p style="white-space: pre-wrap;">${message.content}</p>
+                </div>
+                <div>
+                    ${from_user.id === currentUserId
+                    ? '<span class="read-status">未読</span>'
+                    : ''
+                    }
+                    <span>${message.create_at}</span>
+                </div>
+            </div>`;
+
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            if (from_user.id !== currentUserId) {
+                observer.observe(newMessage);
+            }
+        });
+
+        function markMessageAsRead(messageId, readerId) {
+            console.log('file', currentUserId)
+            socket.emit('read_message', {
+                message_id: messageId,
+                reader_id: readerId,
+                room: room
+            });
+        }
+
+        socket.on('message_read', function(data) {
+            const messageElement = document.getElementById('message-' + data.message_id);
+            if (messageElement.style.textAlign === 'right') {
+                messageElement.getElementsByClassName('read-status')[0].textContent = '既読';
             }
         });
     </script>
