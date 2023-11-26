@@ -22,7 +22,10 @@ class User(UserMixin, db.Model):
         default=generate_password_hash('snsflaskapp')
     )
     birthday = db.Column(db.DateTime)
-    icon = db.Column(db.String(255))
+    icon = db.Column(
+        db.String(255),
+        default='images/default_icon.png'
+    )
     blogs = db.relationship('Blog', backref='user', lazy=True)
     is_active = db.Column(db.Boolean, unique=False, default=False)
     create_at = db.Column(db.DateTime, default=datetime.now)
