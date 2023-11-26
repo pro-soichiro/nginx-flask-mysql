@@ -101,6 +101,6 @@ class MessageForm(Form):
     def validate(self):
         if not super(Form, self).validate():
             return False
-        if not UserConnect.is_friend(self.to_user_id.data):
+        if not UserConnect.is_friend(self.to_user_id.data, current_user.id):
             return False
         return True

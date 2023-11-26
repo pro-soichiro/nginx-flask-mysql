@@ -23,7 +23,7 @@
             </td>
             <td>{{ friend.name }}</td>
             <td>
-              <a href="{{ url_for('message.index', id=friend.id) }}">
+              <a href="{{ url_for('message.index', to_user_id=friend.id) }}">
                 メッセージを送る
               </a>
             </td>

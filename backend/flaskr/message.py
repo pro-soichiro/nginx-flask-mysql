@@ -10,21 +10,20 @@ from flask_socketio import emit, join_room
 
 bp = Blueprint('message', __name__, url_prefix='/messages')
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:to_user_id>', methods=['GET'])
 @login_required
-def index(id):
-    if not UserConnect.is_friend(id):
+def index(to_user_id):
+    user_connect = UserConnect.find_friend(current_user.id, to_user_id)
+    if not user_connect:
         return redirect(url_for('main.index'))
     form = MessageForm(request.form)
-    messages = Message.get_friend_messages(current_user.id, id)
-    to_user = User.find(id)
-    room_id = UserConnect.find_room(id)
+    messages = Message.get_friend_messages(current_user.id, to_user_id)
     return render_template(
         'message/index.html',
         form=form,
         messages=messages,
-        to_user=to_user,
-        room_id=room_id,
+        to_user_id=to_user_id,
+        room_id=user_connect.id,
     )
 
 @socketio.on('join')

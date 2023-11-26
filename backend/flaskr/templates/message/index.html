@@ -68,7 +68,7 @@
         <div class="chat-input">
             <form>
                 {{ form.csrf_token }}
-                {{ form.to_user_id(value=to_user.id) }}
+                {{ form.to_user_id(value=to_user_id) }}
                 {{ form.room(value=room_id) }}
                 {{ render_field(form.message, cols="50", rows="5")  }}
                 {{ form.submit(onclick="sendMessage()", type="button") }}
@@ -106,7 +106,7 @@
             });
         })
 
-        function sendMessage() {
+        const sendMessage = () => {
             if (messageElement.value === '') {
                 return;
             }
@@ -128,7 +128,7 @@
             }
         });
 
-        function handleIntersect(entries, observer) {
+        const handleIntersect = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const messageId =
@@ -176,7 +176,7 @@
             }
         });
 
-        function markMessageAsRead(messageId, readerId) {
+        const markMessageAsRead = (messageId, readerId) => {
             console.log('file', currentUserId)
             socket.emit('read_message', {
                 message_id: messageId,
@@ -185,9 +185,9 @@
             });
         }
 
-        socket.on('message_read', function(data) {
+        socket.on('message_read', data => {
             const messageElement = document.getElementById('message-' + data.message_id);
-            if (messageElement.style.textAlign === 'right') {
+            if (messageElement.classList.contains('right')) {
                 messageElement.getElementsByClassName('read-status')[0].textContent = '既読';
             }
         });

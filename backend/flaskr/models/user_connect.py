@@ -18,29 +18,33 @@ class UserConnect(db.Model):
         self.to_user_id = to_user_id
 
     @classmethod
-    def find(cls, from_user_id, to_user_id):
-        return cls.query.filter_by(from_user_id=from_user_id, to_user_id=to_user_id).first()
-
-    @classmethod
-    def find_room(cls, to_user_id):
+    def find_friend(cls, id1, id2):
         return cls.query.filter(
             or_(
                 and_(
-                    UserConnect.from_user_id == to_user_id,
-                    UserConnect.to_user_id == current_user.id,
+                    UserConnect.from_user_id == id1,
+                    UserConnect.to_user_id == id2,
                     UserConnect.status == 1
                 ),
                 and_(
-                    UserConnect.from_user_id == current_user.id,
-                    UserConnect.to_user_id == to_user_id,
+                    UserConnect.from_user_id == id2,
+                    UserConnect.to_user_id == id1,
                     UserConnect.status == 1
                 )
             ),
         ).first()
 
     @classmethod
+    def is_friend(cls, id1, id2):
+        user_connect = cls.find_friend(id1, id2)
+        return True if user_connect else False
+
+    @classmethod
     def accept(cls, current_user_id, to_user_id):
-        connect = cls.find(to_user_id, current_user_id)
+        connect = cls.query.filter_by(
+            from_user_id=to_user_id,
+            to_user_id=current_user_id
+        ).first()
         if connect is None:
             return False
         connect.status = 1
@@ -49,24 +53,6 @@ class UserConnect(db.Model):
     @classmethod
     def connect(cls, from_user_id, to_user_id):
         cls(from_user_id, to_user_id).save()
-
-    @classmethod
-    def is_friend(cls, to_user_id):
-        user = cls.query.filter(
-            or_(
-                and_(
-                    UserConnect.from_user_id == to_user_id,
-                    UserConnect.to_user_id == current_user.id,
-                    UserConnect.status == 1
-                ),
-                and_(
-                    UserConnect.from_user_id == current_user.id,
-                    UserConnect.to_user_id == to_user_id,
-                    UserConnect.status == 1
-                )
-            ),
-        ).first()
-        return True if user else False
 
     def save(self):
         self.update_at = datetime.now()
