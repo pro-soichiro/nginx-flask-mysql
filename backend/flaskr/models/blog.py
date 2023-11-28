@@ -1,16 +1,12 @@
 from flaskr.database import db
-from datetime import datetime
+from flaskr.models.base_model import BaseModel
 
-class Blog(db.Model):
+class Blog(BaseModel):
     __tablename__ = 'blogs'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    def __repr__(self):
-        return "<Blog(id='%s', title='%s', body='%s')>" % (self.id, self.title, self.body)
 
     @staticmethod
     def all():
@@ -27,7 +23,6 @@ class Blog(db.Model):
     def update(self, title, body):
         self.title = title
         self.body = body
-        self.update_at = datetime.now()
         db.session.commit()
 
     def delete(self):

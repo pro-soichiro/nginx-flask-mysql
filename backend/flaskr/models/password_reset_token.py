@@ -1,11 +1,11 @@
 from flaskr.database import db
 from datetime import datetime, timedelta
 from uuid import uuid4
+from flaskr.models.base_model import BaseModel
 
-class PasswordResetToken(db.Model):
+class PasswordResetToken(BaseModel):
     __tablename__ = 'password_reset_tokens'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(
         db.String(64),
         unique=True,
@@ -14,8 +14,6 @@ class PasswordResetToken(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     expire_at = db.Column(db.DateTime, default=datetime.now)
-    create_at = db.Column(db.DateTime, default=datetime.now)
-    update_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, token, user_id, expire_at):
         self.token = token

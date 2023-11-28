@@ -1,17 +1,13 @@
 from flaskr.database import db
-from datetime import datetime
-from flask_login import current_user
 from sqlalchemy import and_, or_
+from flaskr.models.base_model import BaseModel
 
-class UserConnect(db.Model):
+class UserConnect(BaseModel):
     __tablename__ = 'user_connects'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     from_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     status = db.Column(db.Integer, unique=False, default=0)
-    create_at = db.Column(db.DateTime, default=datetime.now)
-    update_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, from_user_id, to_user_id):
         self.from_user_id = from_user_id
@@ -55,7 +51,6 @@ class UserConnect(db.Model):
         cls(from_user_id, to_user_id).save()
 
     def save(self):
-        self.update_at = datetime.now()
         db.session.add(self)
         db.session.commit()
 

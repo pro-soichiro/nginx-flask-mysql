@@ -1,7 +1,9 @@
 from flaskr.database import db
+from flaskr.models.base_model import BaseModel
 
-class MessageReadStatus(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+class MessageReadStatus(BaseModel):
+    __tablename__ = 'message_read_statuses'
+
     message_id = db.Column(db.Integer, db.ForeignKey('messages.id'), nullable=False)
     reader_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     is_read = db.Column(db.Boolean, default=False)

@@ -1,17 +1,14 @@
 from flaskr.database import db
-from datetime import datetime
 from sqlalchemy import and_, or_
 from flaskr.models.message_read_status import MessageReadStatus
+from flaskr.models.base_model import BaseModel
 
-class Message(db.Model):
+class Message(BaseModel):
     __tablename__ = 'messages'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     from_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    create_at = db.Column(db.DateTime, default=datetime.now)
-    update_at = db.Column(db.DateTime, default=datetime.now)
     read_status = db.relationship('MessageReadStatus', backref='message', lazy='dynamic')
     from_user = db.relationship('User', foreign_keys=[from_user_id], backref='send_messages', uselist=False)
 
@@ -43,4 +40,3 @@ class Message(db.Model):
     def get_not_read_message_ids(cls, to_user_id, from_user_id):
         messages = cls.get_friend_messages(to_user_id, from_user_id)
         return list(map(lambda message: message.id, filter(lambda message: message.read_status.first().is_read == False, messages)))
-

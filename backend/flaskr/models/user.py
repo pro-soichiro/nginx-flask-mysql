@@ -6,15 +6,15 @@ from flaskr.login import login_manager
 from sqlalchemy.orm import aliased
 from sqlalchemy import and_, or_
 from flaskr.models.user_connect import UserConnect
+from flaskr.models.base_model import BaseModel
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
-class User(UserMixin, db.Model):
+class User(UserMixin, BaseModel):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(
@@ -28,8 +28,6 @@ class User(UserMixin, db.Model):
     )
     blogs = db.relationship('Blog', backref='user', lazy=True)
     is_active = db.Column(db.Boolean, unique=False, default=False)
-    create_at = db.Column(db.DateTime, default=datetime.now)
-    update_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, name, email):
         self.name = name
