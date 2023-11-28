@@ -29,10 +29,6 @@ class User(UserMixin, BaseModel):
     blogs = db.relationship('Blog', backref='user', lazy=True)
     is_active = db.Column(db.Boolean, unique=False, default=False)
 
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
-
     def validate_password(self, password):
         return check_password_hash(self.password, password)
 
