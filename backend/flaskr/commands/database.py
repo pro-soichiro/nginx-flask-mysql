@@ -21,12 +21,12 @@ def database_setup(without_seed=False, users=100, blogs=10):
     db.create_all()
     if not without_seed:
         click.echo('Seeding database...')
-        database_seed(users, blogs)
+        database_seed(users_count=users, blogs_per_user=blogs)
     click.echo('Setting up database completed.')
 
 @database_cli.command("seed")
-@click.option('--users', default=100, help='Number of users')
-@click.option('--blogs', default=10, help='Number of blogs per user')
+@click.option('--users-count', default=100, help='Number of users')
+@click.option('--blogs-per-user', default=10, help='Number of blogs per user')
 @with_appcontext
 def database_seed(users_count=100, blogs_per_user=10):
     """Seed database with fake data."""
