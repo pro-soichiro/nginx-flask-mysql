@@ -10,6 +10,7 @@ from flaskr.login import login_manager
 from flaskr.mail import mail
 from flaskr.socketio import socketio
 from flaskr.commands.database import database_cli
+from flask_cors import CORS
 
 migrate = Migrate()
 
@@ -29,5 +30,6 @@ def create_app():
     mail.init_app(app)
     socketio.init_app(app)
     app.cli.add_command(database_cli)
+    CORS(app)
 
     return socketio, app
