@@ -3,7 +3,7 @@ server {
     server_name  localhost;
 
     location / {
-        proxy_pass http://backend:8000;
+        proxy_pass http://frontend:3000;
 
         # WebSocket用のヘッダー設定
         proxy_http_version 1.1;
