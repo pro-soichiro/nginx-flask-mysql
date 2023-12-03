@@ -18,3 +18,15 @@ class BaseModel(db.Model):
         updated_at_str = f'updated_at={self.updated_at}' if self.updated_at else 'updated_at=None'
 
         return f'<{class_name}({id_str}, {created_at_str}, {updated_at_str})>'
+
+    @classmethod
+    def all(cls):
+        stmt = db.select(cls)
+        data = db.session.execute(stmt).scalars().all()
+        return data
+
+    @classmethod
+    def find(cls, id):
+        stmt = db.select(cls).where(cls.id == id)
+        data = db.session.execute(stmt).scalar()
+        return data
