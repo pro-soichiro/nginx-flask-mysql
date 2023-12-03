@@ -25,8 +25,7 @@ export default function RootLayout({
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <Link href='/users'>ユーザー一覧</Link>
-                <a href="/">Home</a>
+                <Link href='/users'>ユーザー</Link>
               </li>
               <li>
                 <Link href='/blogs'>ブログ</Link>
