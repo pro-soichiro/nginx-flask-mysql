@@ -65,8 +65,3 @@ def database_reset():
     click.echo('Creating all tables...')
     db.create_all()
     click.echo('Resetting database completed.')
-
-def hoge(users_count=100, blogs_per_user=10):
-    print("hoge")
-    print(users_count)
-    print(blogs_per_user)
