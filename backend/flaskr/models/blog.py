@@ -8,14 +8,6 @@ class Blog(BaseModel):
     body = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    @staticmethod
-    def all():
-        return db.session.query(Blog).all()
-
-    @staticmethod
-    def find(id):
-        return db.session.query(Blog).filter(Blog.id == id).first()
-
     def save(self):
         db.session.add(self)
         db.session.commit()
