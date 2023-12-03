@@ -10,7 +10,7 @@ from flaskr.models.base_model import BaseModel
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return User.find(user_id)
 
 class User(UserMixin, BaseModel):
     __tablename__ = 'users'
@@ -33,16 +33,10 @@ class User(UserMixin, BaseModel):
         return check_password_hash(self.password, password)
 
     @classmethod
-    def all(cls):
-        return cls.query.all()
-
-    @classmethod
-    def find(cls, id):
-        return cls.query.get(id)
-
-    @classmethod
     def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()
+        stmt = db.select(cls).filter_by(email=email)
+        user = db.session.execute(stmt).scalar()
+        return user
 
     @classmethod
     def find_by_name(cls, name):

@@ -35,11 +35,17 @@ class PasswordResetToken(BaseModel):
     @classmethod
     def get_user_id_by_token(cls, token):
         now = datetime.now()
-        record = cls.query.filter_by(token=str(token)).filter(cls.expire_at > now).first()
-        return record.user_id
+        stmt = (
+            db.select(cls.user_id)
+            .where(cls.expire_at > now)
+            .where(cls.token == str(token))
+        )
+        user_id = db.session.execute(stmt).scalar()
+        return user_id
 
     @classmethod
     def delete_token(cls, token):
-        record = cls.query.filter_by(token=str(token))
-        record.delete()
+        stmt = db.select(cls).where(cls.token == str(token))
+        record = db.session.execute(stmt).scalar()
+        db.session.delete(record)
         db.session.commit()
