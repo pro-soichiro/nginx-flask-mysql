@@ -1,6 +1,7 @@
 **/__pycache__/
 backend/flaskr/static/images/tmp/*
 !backend/flaskr/static/images/tmp/.keep
+**/.env
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
